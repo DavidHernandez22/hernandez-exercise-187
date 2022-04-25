@@ -1,0 +1,298 @@
+//AUTHOR: DavidHernandez
+//COURSE: CPT 187
+//PURPOSE: the purpose is to take inventory and ensure that the items requested are in stock.
+//STARTDATE: 4/19/2022
+package edu.cpt187.hernandez.exercise6;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Random;
+import java.util.Scanner;
+
+//Start of Sub Class Inventory
+public class Inventory 
+{
+	//Attributes and Arrays
+	private final String[] DISCOUNT_NAMES={"Club Member", "Club Senior", "Special Offer", "No Discount"};
+	private final double[] DISCOUNT_RATES={0.15, 0.25, 0.2, 0};
+	private final String[] PRIZE_NAMES= {"Car", "House", "Money"};
+	private final int MAX_RECORDS=35;
+	private final int NOT_FOUND=-1;
+	private final int ONE=1;
+	private final int RESET_VALUE=0;
+	
+	private int[] itemIDs=new int[MAX_RECORDS];
+	private String[] itemNames=new String[MAX_RECORDS];
+	private double[] itemPrices=new double[MAX_RECORDS];
+	private int[] orderQuantities=new int[MAX_RECORDS];
+	private double[] orderTotals=new double[MAX_RECORDS];
+	private int[] inStockCounts=new int[MAX_RECORDS];
+	
+	private int itemSearchIndex;
+	private int recordCount;
+	private Random prizeGenerator=new Random();
+	//end of Attributes and Arrays
+	
+	//Beginning of Constructor
+	public Inventory()
+	{
+		
+	}//End of Constructor
+	
+	//Beginning of Setters
+	//Beginning of setReduceStock
+	public void setReduceStock(int borrowedHowMany)
+	{
+		inStockCounts[itemSearchIndex] = inStockCounts[itemSearchIndex] - borrowedHowMany;
+	}//End of setReduceStock
+	//Beginning of setLoadItems
+	public void setLoadItems(String borrowedFileName)
+	{
+		//try block
+		try 
+		{
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			recordCount = RESET_VALUE;
+			//Beginning of While infile.hasNExt is True and recordCount is < MAX_RECORDS
+			while(infile.hasNext()==true && recordCount < MAX_RECORDS)
+			{
+				itemIDs[recordCount]=infile.nextInt();
+				itemNames[recordCount]=infile.next();
+				itemPrices[recordCount]=infile.nextDouble();
+				inStockCounts[recordCount]=infile.nextInt();
+				recordCount++;
+			}//End of While infile.hasNExt is True and recordCount is < MAX_RECORDS
+			infile.close();
+			setBubbleSort();
+		}//End of Try
+		//catch block
+		catch(IOException ex)
+		{
+			recordCount=NOT_FOUND;
+		}//End of Catch
+	}//End of setLoadItems
+	//Beginning of setLoadItems
+	public void setLoadItems(String borrowedFileName, int borrowedSize)
+	{
+		//try block
+		try 
+		{
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			recordCount = RESET_VALUE;
+			//Beginning of While infile.hasNExt is True and recordCount is < MAX_RECORDS and recordCount is < borrowedSize
+			while(infile.hasNext()==true && recordCount < MAX_RECORDS && recordCount < borrowedSize)
+			{
+				itemIDs[recordCount]=infile.nextInt();
+				itemNames[recordCount]=infile.next();
+				itemPrices[recordCount]=infile.nextDouble();
+				orderQuantities[recordCount]=infile.nextInt();
+				orderTotals[recordCount]=infile.nextDouble();
+				
+				recordCount++;
+			}//End of While infile.hasNExt is True and recordCount is < MAX_RECORDS and recordCount is < borrowedSize
+			infile.close();
+			setBubbleSort();
+		}//End of Try
+		//catch block
+		catch(IOException ex)
+		{
+			recordCount=NOT_FOUND;
+		}//End of Catch
+	}//End of setLoadItems
+	//Beginning of setSearchIndex
+	public void setSearchIndex(int borrowedID)
+	{
+		itemSearchIndex=getBinSearch(borrowedID);
+	}//End of setSearchIndex
+	//Beginning of setBubbleSort
+	public void setBubbleSort()
+	{
+		boolean localSwap=false;
+		int localIndex=0;
+		
+		int ZERO=0;
+		int localLast=recordCount-ONE;
+		//While localLast is  > ZERO
+		while(localLast > ZERO)
+		{
+			localIndex=ZERO;
+			localSwap=false;
+			//While localIndex is < localLast
+			while(localIndex < localLast)
+			{
+				//Test if itemIDs is > itemIDs
+				if(itemIDs[localIndex]>itemIDs[localIndex + ONE])
+				{
+					setSwapArrayElements(localIndex);
+					localSwap=true;
+				}//End of Test if itemIDs is > itemIDs
+				localIndex++;
+			}//End of While localIndex is < localLast
+			//Test if localSwap is false
+			if(localSwap==false)
+			{
+				localLast=ZERO;
+			}//End of Test if localSwap is false
+			//Else for Test if localSwap is false
+			else
+			{
+				localLast--;
+			}//End of Else for Test if localSwap is false
+		}//End of While is localLast > ZERO
+	}//End of setBubbleSort
+	//Beginning of setSwapArrayElements
+	public void setSwapArrayElements(int borrowedIndex)
+	{
+		int localItemIDs=0;
+		String localItemNames="";
+		double localItemPrices=0.00;
+		int localOrderQuantities=0;
+		double localOrderTotals=0.00;
+		int localInStockCounts=0;
+		
+		localItemIDs=itemIDs[borrowedIndex];
+		itemIDs[borrowedIndex]=itemIDs[borrowedIndex+ONE];
+		itemIDs[borrowedIndex+ONE]=localItemIDs;
+		
+		localItemNames=itemNames[borrowedIndex];
+		itemNames[borrowedIndex]=itemNames[borrowedIndex+ONE];
+		itemNames[borrowedIndex+ONE]=localItemNames;
+		
+		localItemPrices=itemPrices[borrowedIndex];
+		itemPrices[borrowedIndex]=itemPrices[borrowedIndex+ONE];
+		itemPrices[borrowedIndex+ONE]=localItemPrices;
+		
+		localOrderQuantities=orderQuantities[borrowedIndex];
+		orderQuantities[borrowedIndex]=orderQuantities[borrowedIndex+ONE];
+		orderQuantities[borrowedIndex+ONE]=localOrderQuantities;
+		
+		localOrderTotals=orderTotals[borrowedIndex];
+		orderTotals[borrowedIndex]=orderTotals[borrowedIndex+ONE];
+		orderTotals[borrowedIndex+ONE]=localOrderTotals;
+		
+		inStockCounts[borrowedIndex]=localInStockCounts;
+		inStockCounts[borrowedIndex]=inStockCounts[borrowedIndex+ONE];
+		inStockCounts[borrowedIndex+ONE]=localInStockCounts;
+	}//End of setSwapArrayElements
+	//End of Setters
+	
+	//Beginning of Getters
+	//Beginning of getBinSearch will return its value
+	public int getBinSearch(int borrowedBorrowedID)
+	{
+		boolean localFound=false;
+		int TWO=2;
+		int localFirst=0;
+		int localMid=0;
+		int localLast=recordCount-ONE;
+		//While localLast is <= localFirst and if local found is false
+		while(localFirst<=localLast && localFound==false)
+		{
+			localMid=(localFirst+localLast)/TWO;
+			//test if itemIDs is borrowedBorrowedID
+			if(itemIDs[localMid]==borrowedBorrowedID)
+			{
+				localFound=true;
+			}//End of test if itemIDs is borrowedBorrowedID
+			
+			//Test if itemIDs is < borrowedBorrowedID
+			else if(itemIDs[localMid]<borrowedBorrowedID)
+			{
+				localFirst=localMid+ONE;
+			}//End of Test if itemIDs is < borrowedBorrowedID
+			//Else for Test if itemIDs is < borrowedBorrowedID
+			else
+			{
+				localLast=localMid-ONE;
+			}//End of Else for Test if itemIDs is < borrowedBorrowedID
+			
+		}//End of While localLast is <= localFirst and if local found is false
+		//Test if localFound is false
+		if(localFound==false)
+		{
+			localMid=NOT_FOUND;
+		}//End of Test if localFound is false
+		return localMid;
+	}//End of getBinSearch will return its value
+	//Beginning of getInStockCounts will return its value
+	public int[] getInStockCounts()
+	{
+		return inStockCounts;
+	}//End of getInStockCounts will return its value
+	//Beginning of getItemIDs will return its value
+	public int[] getItemIDs()
+	{
+		return itemIDs;
+	}//End of getItemIDs will return its value
+	//Beginning of getItemNames will return its value
+	public String[] getItemNames()
+	{
+		return itemNames;
+	}//End of getItemNames will return its value
+	//Beginning of getItemPrices will return its value
+	public double[] getItemPrices()
+	{
+		return itemPrices;
+	}//End of getItemPrices will return its value
+	//Beginning of getDiscountNames will return its value
+	public String[] getDiscountNames()
+	{
+		return DISCOUNT_NAMES;
+	}//End of getDiscountNames will return its value
+	//Beginning of getDiscountRates will return its value
+	public double[] getDiscountRates()
+	{
+		return DISCOUNT_RATES;
+	}//End of getDiscountRates will return its value
+	//Beginning of getOrderQuantities will return its value
+	public int[] getOrderQuantities()
+	{
+		return orderQuantities;
+	}//End of getOrderQuantities will return its value
+	//Beginning of getOrderTotals will return its value
+	public double[] getOrderTotals()
+	{
+		return orderTotals;
+	}//End of getOrderTotals will return its value
+	//Beginning of getPrizeNames will return its value
+	public String[] getPrizeNames()
+	{
+		return PRIZE_NAMES;
+	}//End of getPrizeNames will return its value
+	//Beginning of getRandomNumber will return its value
+	public int getRandomNumber()
+	{
+		return prizeGenerator.nextInt(PRIZE_NAMES.length);
+	}//End of getRandomNumber will return its value
+	//Beginning of getMaxRecords will return its value
+	public int getMaxRecords()
+	{
+		return MAX_RECORDS;
+	}//End of getMaxRecords will return its value
+	//Beginning of getItemSearchIndex will return its value
+	public int getItemSearchIndex()
+	{
+		return itemSearchIndex;
+	}//End of getItemSearchIndex will return its value
+	//Beginning of getRecordCount will return its value
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//End of getRecordCount will return its value
+	//Beginning of getGrandTotal will return its value
+	public double getGrandTotal()
+	{
+		int localIndex=0;
+		double localGrandTotal=0.0;
+		//While localIndex is < itemNames
+		while(localIndex < orderTotals.length)
+		{
+			localGrandTotal=localGrandTotal+orderTotals[localIndex];
+			localIndex++;
+		}//End of While localIndex is < itemNames
+		return localGrandTotal;
+	}//End of getGrandTotal will return its value
+	//End of Getters
+}//End of Sub Class Inventory

@@ -1,0 +1,146 @@
+//AUTHOR: DavidHernandez
+//COURSE: CPT 187
+//PURPOSE: the purpose is to correctly assign the user or create on and verify the password and remember it
+//STARTDATE: 4/19/2022
+package edu.cpt187.hernandez.exercise6;
+
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+//Start of Sub Class UserAccounts
+public class UserAccounts 
+{
+	//Attributes and Arrays
+	private final int NOT_FOUND = -1;
+	private final int RESET_VALUE = 0;
+	private final int MAXIMUM_RECORDS = 50;
+	
+	private String[] userNames=new String[MAXIMUM_RECORDS];
+	private String[] passwords=new String[MAXIMUM_RECORDS];
+	
+	private String masterFileName="";
+	private int recordCount=0;
+	private int searchedIndex=0;
+	
+	//end of Attributes and Arrays
+	
+	//Beginning of Constructor
+	public UserAccounts(String borrowedFileName)
+	{
+		masterFileName=borrowedFileName;
+	}//End of Constructor
+	
+	//Beginning of Setters
+	//Beginning of setUserAccountArrays
+	public void setUserAccountArrays()
+	{
+		//try block
+		try 
+		{
+			Scanner infile = new Scanner(new FileInputStream(masterFileName));
+			
+			recordCount = RESET_VALUE;
+			//Beginning of While infile.hasNExt is True and recordCount is < MAX_RECORDS and recordCount is < borrowedSize
+			while(infile.hasNext()==true && recordCount < MAXIMUM_RECORDS)
+			{
+				userNames[recordCount]=infile.next();
+				passwords[recordCount]=infile.next();
+				
+				recordCount++;
+			}//End of While infile.hasNExt is True and recordCount is < MAX_RECORDS and recordCount is < borrowedSize
+			infile.close();
+		}//End of Try
+		//catch block
+		catch(IOException ex)
+		{
+			recordCount=NOT_FOUND;
+		}//End of Catch
+	}//End of setUserAccountArrays
+	//Beginning of setSearchedIndex
+	public void setSearchedIndex(String borrowedUserName)
+	{
+		searchedIndex=getSeqSearch(borrowedUserName);
+	}//End of setSearchedIndex
+	//Beginning of setSearchedIndex
+	public void setSearchedIndex(String borrowedUserName, String borrowedPassword)
+	{
+		searchedIndex=getSeqSearch(borrowedUserName);
+		//Test if searched index is >= RESET_VALUE and getPasswordMatch is false
+		if(searchedIndex >= RESET_VALUE && getPasswordMatch(borrowedPassword)==false)
+		{
+			searchedIndex=NOT_FOUND;
+		}//End of Test if searchedIndex is >= RESET_VALUE and getPasswordMatch is false
+	}//End of setSearchedIndex
+	//Beginning of setWriteOneRecord
+	public void setWriteOneRecord(String borrowedUserName, String borrowedPassword)
+	{
+		
+		//Try block
+		try
+		{
+			PrintWriter filePW = new PrintWriter(new FileWriter(masterFileName, true));
+					
+			filePW.printf("%n%s\t%s", borrowedUserName, borrowedPassword);
+			
+			filePW.close();
+		}//End of Try block
+		//Catch Block
+		catch(IOException ex)
+		{
+			
+		}//End of Catch Block
+	}//End of setWriteOneRecord
+	//End of Setters
+	
+	//Beginning of Getters
+	//Beginning of getSeqSearch will return its value
+	public int getSeqSearch(String borrowedBorrowedUserName)
+	{
+		int localIndex=0;
+		int localFound=NOT_FOUND;
+		//While localIndex is < recordCount
+		while(localIndex < recordCount)
+		{
+			//Test if borrowedBorrowedID is itemIDs[localIndex]
+			if(borrowedBorrowedUserName.equalsIgnoreCase(userNames[localIndex]))
+			{
+				localFound=localIndex;
+				localIndex=recordCount;
+			}//End of Test if borrowedBorrowedID is itemIDs[localIndex]
+			
+			else
+			{
+				localIndex++;
+			}
+		}//End of While localIndex is < recordCount
+		return localFound;
+	}//End of getSeqSearch will return its value
+	//Beginning of getPasswordMatch will return its value
+	public boolean getPasswordMatch(String borrowedBorrowedPassword)
+	{
+		return passwords[getSearchedIndex()].equals(borrowedBorrowedPassword);
+	}//End of getPasswordMatch will return its value
+	//Beginning of getFileName will return its value
+	public String getFileName()
+	{
+		return masterFileName;
+	}//End of getFileName will return its value
+	//Beginning of getMaximumRecords will return its value
+	public int getMaximumRecords()
+	{
+		return MAXIMUM_RECORDS;
+	}//End of getMaximumRecords will return its value
+	//Beginning of getRecordCount will return its value
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//End of getRecordCount will return its value
+	//Beginning of getSearchedIndex will return its value
+	public int getSearchedIndex()
+	{
+		return searchedIndex;
+	}//End of getSearchedIndex will return its value
+	//End of Getters
+}//End of Sub Class UserAccounts

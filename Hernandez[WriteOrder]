@@ -1,0 +1,64 @@
+//AUTHOR: DavidHernandez
+//COURSE: CPT 187
+//PURPOSE: The purpose is to show you the items that have been selected and it's price and the amount of you wish to purchase of that item with it's total cost
+//STARTDATE: 4/19/2022
+package edu.cpt187.hernandez.exercise6;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+//Start of Sub Class WriteOrder
+public class WriteOrder 
+{
+	//Attributes and Arrays
+	private boolean fileFoundFlag=false;
+	private String masterFileName="";
+	private int recordCount=0;
+	//End of Attributes and Arrays
+	//Beginning of Constructor
+	public WriteOrder(String borrowedFileName)
+	{
+		masterFileName=borrowedFileName;
+	}//End of Constructor
+	
+	//Beginning of Setters
+	//Beginning of setReduceStock
+	public void setWriteOrder(int borrowedItemID, String borrowedItemName, double borrowedItemPrice, int borrowedQuantity, double borrowedOrderCost)
+	{
+		//Try block
+		try
+		{
+			PrintWriter filePW = new PrintWriter(new FileWriter(masterFileName, true));
+			
+			filePW.printf("%n%d\t%s\t%f\t%d\t%f", borrowedItemID, borrowedItemName, borrowedItemPrice, borrowedQuantity, borrowedOrderCost);
+			recordCount++;
+			fileFoundFlag=true;
+			filePW.close();
+		}//End of Try block
+		//Catch Block
+		catch(IOException ex)
+		{
+			fileFoundFlag=false;
+		}//End of Catch Block
+	}//End of setReduceStock
+	//End of Setters
+	
+	//Beginning of Getters
+	//Beginning of getFileFoundFlag will return its value
+	public boolean getFileFoundFlag()
+	{
+		return fileFoundFlag;
+	}//End of getFileFoundFlag will return its value
+	//Beginning of getFileName will return its value
+	public String getFileName()
+	{
+		return masterFileName;
+	}//End of getFileName will return its value
+	//Beginning of getRecordCount will return its value
+	public int getRecordCount()
+	{
+		return recordCount;
+	}//End of getRecordCount will return its value
+	//End of Getters
+}//End of Start of Sub Class WriteOrder
